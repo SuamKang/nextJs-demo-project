@@ -35,7 +35,7 @@ export async function getStaticPaths() {
   client.close();
 
   return {
-    fallback: false,
+    fallback: "blocking",
     // 경로 배열 동적 생성하기
     paths: meetups.map((meetup) => ({
       params: {
@@ -106,7 +106,7 @@ export default DetailPage;
 
 // "getStaticPaths"함수
 
-// 이 함수는 nextJs안에 내장된 또다른 메소드이며 getStatic과 getServerSideProps함수를 사용하는게 아니라면, getStaticPaths함수를 추가해주어야한다.
+// 이 함수는 nextJs안에 내장된 또다른 메소드이며 반드시 getStaticProps 함수와 함께 사용되며, getStaticProps 함수는 getStaticPaths에서 정의한 경로에 대한 각 페이지의 데이터를 가져오는 역할을 한다.
 
 // 이건 언제 사용할까?
 
@@ -131,8 +131,24 @@ export default DetailPage;
 // 바로 반환되는 객체의 또다른 필드로 "fallback"키를 추가해주어야한다.
 
 // 이 키가 nextJs에게 paths 배열이 지원되는 모든 params 매개변수를 저장할지 아님 일부만 저장할지를 알려준다.
-// false : 모든 id값을 paths에 포함해라 / true: 포함되지 않는 id값도 동적으로 생성되게 하라
-// 즉 지원되는 파리미터만 생성해서 사용자에게 내가 지정해놓은 id값들로 접근할때만 페이지를 보여줄수 있게 하려면 false를 사용한다.
+
+// "fallback"필드 값의 종류
+
+// false : fallback을 false로 설정하면, Next.js는 getStaticPaths에서 정의한 모든 경로에 대한 정적 페이지를 미리 빌드한다.
+// 즉, getStaticPaths에서 반환된 모든 경로의 데이터를 미리 가져와 정적 페이지를 생성하며, 이후에는 동적으로 생성된 페이지가 없다.
+// 이 옵션을 선택하면 사용자가 요청한 경로에 해당하는 정적 페이지가 없는 경우 404 페이지를 반환한다.
+
+// true : fallback을 true로 설정하면, Next.js는 getStaticPaths에서 정의한 경로 중 일부만을 미리 빌드하고 나머지 경로는 요청 시 동적으로 생성한다.
+// 즉, getStaticPaths에서 반환된 일부 경로의 데이터만 미리 가져와 정적 페이지를 생성하며, 나머지 경로에 대해서는 빌드하지 않는다.
+// 사용자가 요청한 경로에 해당하는 정적 페이지가 없는 경우, Next.js는 요청을 받아 해당 경로의 데이터를 동적으로 생성하고 브라우저에 반환한다. 그 후, 해당 경로에 대한 정적 페이지를 생성하여 저장한다.
+
+// 'fallback'키 값으로 들어올수있는 true 와 'blocking'의 차이
+
+// true와 blocking값 모두 빌드를 하고나서 nextJs가 사용자가 요청한 경로에 대해 정의한게 없는 페이지일 경우 바로 페이지를 생성후에 캐시에 저장하여 필요할 때 이것을 미리 생성해주는 공통점이 있지만,
+// true로 설정했을땐, 빈 페이지가 즉시 반환되기 때문에 데이터가 아직 없는 경우에 대한(로딩상태)처리가 필요하다.
+// 반면에 blocking로 설정했을땐, 페이지가 미리 생성될 때까지 사용자는 아무것도 볼 수 없으며 후에 완성된 페이지가 제공되게 해준다.
+
+// 우선 이 부분에선 지원되는 파리미터만 생성해서 사용자에게 내가 지정해놓은 id값들로 접근할때만 페이지를 보여줄수 있게 하려면 false를 사용한다.
 
 // false일 때, 만약 지원하지 않는 meetupId 값을 포함하게 되면 404에러를 발생시킨다.
 
