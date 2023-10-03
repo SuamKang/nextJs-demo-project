@@ -19,7 +19,7 @@ const NewMeetupPage = () => {
     const data = await response.json();
     console.log(data);
 
-    router.push("/");
+    router.push("/"); // 글 추가 후 경로 이동
   };
 
   return (
