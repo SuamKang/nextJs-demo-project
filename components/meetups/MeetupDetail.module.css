@@ -1,0 +1,14 @@
+.detail {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.img {
+  width: 100%;
+}
+
+.title {
+  font-size: 20px;
+  transition: all 0.4s;
+  transform: scale(1.02);
+}
